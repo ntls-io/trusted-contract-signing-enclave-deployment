@@ -1,0 +1,39 @@
+# Ripple CBDC demo deployment
+
+networks:
+  trusted-contract-main:
+
+services:
+  # Docs: https://github.com/nginx-proxy/nginx-proxy
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:alpine
+    networks:
+      - trusted-contract-main
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/tls:/etc/nginx/certs:ro
+
+  trusted-contract-main-api:
+    image: ghcr.io/ntls-io/sgx-wallet-hw:ripple-cbdc-challenge
+    environment:
+      VIRTUAL_HOST: trusted-contract-main-api.ntls.io
+      BIND_ADDR: "0.0.0.0:8080"
+      CERT_NAME: ntls-api
+    networks:
+      - trusted-contract-main
+    volumes:
+      - trusted-contract-store-main:/app/vault_store
+    read_only: true
+    init: true
+    devices:
+      - /dev/sgx/enclave
+      - /dev/sgx/provision
+    expose:
+      - "8080"
+
+
+volumes:
+  trusted-contract-store-main:
