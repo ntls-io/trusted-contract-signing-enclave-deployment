@@ -2,6 +2,7 @@
 
 networks:
   trusted-contract-main:
+  trusted-contract-mongo:
 
 services:
   # Docs: https://github.com/nginx-proxy/nginx-proxy
@@ -9,6 +10,7 @@ services:
     image: nginxproxy/nginx-proxy:alpine
     networks:
       - trusted-contract-main
+      - trusted-contract-mongo
     ports:
       - "80:80"
       - "443:443"
@@ -34,6 +36,23 @@ services:
     expose:
       - "8080"
 
+  trusted-contract-mongo-api:
+    image: ghcr.io/ntls-io/trusted-contract-mongodb-api:main
+    environment:
+      VIRTUAL_HOST: trusted-contract-mongo-api.ntls.io
+      VIRTUAL_PATH: /
+      BIND_ADDR: "0.0.0.0:8000"
+      CERT_NAME: ntls-api
+
+      PRIMARY_ORIGIN: "https://trusted-contract-mongo-api.ntls.io"
+      STAGING_MODE: 1
+      WALLET_DB_CONNECTION_STRING: ${TRUSTED_CONTRACT_DB_CONNECTION_STRING}
+      WALLET_DB_NAME: ${TRUSTED_CONTRACT_DB_NAME}
+    networks:
+      - trusted-contract-mongo
+    init: true
+    expose:
+      - "8000"
 
 volumes:
   trusted-contract-store-main:
