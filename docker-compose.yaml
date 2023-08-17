@@ -3,6 +3,7 @@
 networks:
   trusted-contract-main:
   trusted-contract-mongo:
+  trusted-contract-execution-enclave:
 
 services:
   # Docs: https://github.com/nginx-proxy/nginx-proxy
@@ -54,5 +55,24 @@ services:
     expose:
       - "8000"
 
+  trusted-contract-execution-enclave:
+    image: ghcr.io/ntls-io/trusted-contract-execution-enclave-hw:main
+    environment:
+      VIRTUAL_HOST: trusted-contract-execution-enclave.ntls.io
+      BIND_ADDR: "0.0.0.0:8000"
+      CERT_NAME: ntls-api
+    networks:
+      - trusted-contract-execution-enclave
+    volumes:
+      - trusted-contract-store-execution:/app/wallet_store
+    read_only: true
+    init: true
+    devices:
+      - /dev/sgx/enclave
+      - /dev/sgx/provision
+    expose:
+      - "8000"
+
 volumes:
   trusted-contract-store-main:
+  trusted-contract-store-execution:
