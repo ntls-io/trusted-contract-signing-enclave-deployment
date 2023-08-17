@@ -57,7 +57,7 @@ services:
       - "8000"
 
   trusted-contract-execution-enclave:
-    image: ghcr.io/ntls-io/trusted-contract-execution-enclave-hw:main
+    image: ghcr.io/ntls-io/trusted-contract-execution-enclave-hw:test
     environment:
       VIRTUAL_HOST: trusted-contract-execution-enclave.ntls.io
       BIND_ADDR: "0.0.0.0:8000"
