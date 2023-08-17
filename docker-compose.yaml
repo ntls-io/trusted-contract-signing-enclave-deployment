@@ -66,7 +66,7 @@ services:
       - trusted-contract-execution-enclave
     volumes:
       - trusted-contract-store-execution:/app/wallet_store
-    read_only: true
+    read_only: false
     init: true
     devices:
       - /dev/sgx/enclave
