@@ -12,6 +12,7 @@ services:
     networks:
       - trusted-contract-main
       - trusted-contract-mongo
+      - trusted-contract-execution-enclave
     ports:
       - "80:80"
       - "443:443"
